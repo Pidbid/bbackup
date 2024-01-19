@@ -1,0 +1,28 @@
+# one of ali_oss,tencent_oss,http_post
+depends:
+  -  ali_oss
+
+
+backup_dirs:
+  - 
+    dir: ./test # local backup dir
+    name: test # backup name 
+    compression: true
+    exclude_folders:
+      - node_modeles
+    exclude_files:
+      - .DS_Store
+    schedule: 1d # 1d2h3m4s = 1 day 2 hours 3 minutes 4 seconds run a backup task
+
+ali_oss:
+  endpoint: oss-cn-beijing # bucket endpoint
+  bucket: backup # alioss bucket name
+  oss_access_key_id: AAAAA # your ali oss access key id
+  oss_access_key_secret: AAAAAA # your ali oss access key secret
+
+tencent_oss:
+  endpoint: 
+
+http_post:
+  url: 
+  body: 

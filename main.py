@@ -18,16 +18,15 @@ import schedule
 from loguru import logger
 from modules.uploads import UPLOADS
 
-
 seconds = 0
 
 uploads = UPLOADS()
-# zip_file = zipfile.ZipFile(zip_file_name, 'w', zipfile.ZIP_DEFLATED)
 
 with open("config.yml", "rb") as fp:
-    config = yaml.safe_load(fp)
-
-# print(config)
+    try:
+        config = yaml.safe_load(fp)
+    except yaml.YAMLError as exc:
+        logger.error(exc)
 
 
 def schedule2seconds(schedule_str: str):
@@ -49,16 +48,13 @@ def schedule2seconds(schedule_str: str):
     return s_day * 24 * 60 * 60 + s_hour * 60 * 60 + s_minute * 60 + s_second
 
 
-# print(schedule2seconds('1m25s'))
-
-
 def main_job():
     global seconds
     for backup in config["backup_dirs"]:
         if seconds % schedule2seconds(backup["schedule"]) != 0:
             continue
         zip_name = f"{backup['name']}_{int(time.time()*1000)}.zip"
-        zip_file = zipfile.ZipFile(f"./bbackup/{zip_name}", "w", zipfile.ZIP_DEFLATED)
+        zip_file = zipfile.ZipFile(f"./backup/{zip_name}", "w", zipfile.ZIP_DEFLATED)
         backup_dir = backup["dir"]
         try:
             exclude_folders = backup["exclude_folders"]
@@ -71,12 +67,14 @@ def main_job():
         for dirpath, dirnames, filenames in os.walk(backup_dir):
             if dirpath not in exclude_folders:
                 for file in filenames:
-                    zip_file.write(os.path.join(dirpath, file))
+                    if file not in exclude_files:
+                        zip_file.write(os.path.join(dirpath, file))
         zip_file.close()
         if backup["compression"]:
             for depend in config["depends"]:
-                uploads.aliyun(f"./bbackup/{zip_name}", f'{backup["name"]}/')
+                uploads.aliyun(f"./backup/{zip_name}", f'{backup["name"]}/')
                 logger.info(f'{backup["name"]} backuped')
+
 
 schedule.every(1).seconds.do(main_job)
 if __name__ == "__main__":
