@@ -28,6 +28,17 @@ with open("config.yml", "rb") as fp:
     except yaml.YAMLError as exc:
         logger.error(exc)
 
+logger.add(
+    sink="./bbackup.log",
+    level="INFO",
+    rotation="00:00",
+    retention="7 days",
+    compression="zip",
+    encoding="utf-8",
+    enqueue=True,
+    format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}",
+)
+
 
 def schedule2seconds(schedule_str: str):
     s_day = 0
@@ -74,6 +85,7 @@ def main_job():
             for depend in config["depends"]:
                 uploads.aliyun(f"./backup/{zip_name}", f'{backup["name"]}/')
                 logger.info(f'{backup["name"]} backuped')
+            os.remove(f"./backup/{zip_name}")
 
 
 schedule.every(1).seconds.do(main_job)
