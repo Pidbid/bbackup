@@ -7,6 +7,7 @@
   > git clone https://github.com/Pidbid/bbackup.git  
   > cd bbackup  
   > pip install -r requirements.txt  
+  > 复制config_demo.yml 并修改配置后命名为config.yml  
   > python main.py
 
 ## 配置  
@@ -25,7 +26,7 @@
   - oss_access_key_id # 阿里云的 access_key  
   - oss_access_key_secret # 阿里云的 access_secret  
 
-## 特征  
+## 特性  
 - [x] 文件夹备份  
 - [ ] 文件备份  
 - [x] 支持阿里云oss  

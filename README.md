@@ -7,6 +7,7 @@ A file/folder compression backup cohabit.
   > git clone https://github.com/Pidbid/bbackup.git  
   > cd bbackup  
   > pip install -r requirements.txt  
+  > copy config_demo.yml and rewname to config.yml  
   > python main.py
 
 ## Configuration  
