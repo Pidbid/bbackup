@@ -76,10 +76,13 @@ def main_job():
         except:
             exclude_files = []
         for dirpath, dirnames, filenames in os.walk(backup_dir):
-            if dirpath not in exclude_folders:
+            if os.path.basename(dirpath) not in exclude_folders:
                 for file in filenames:
                     if file not in exclude_files:
-                        zip_file.write(os.path.join(dirpath, file))
+                        zip_file.write(
+                            os.path.join(dirpath, file),
+                            arcname=os.path.join(os.path.basename(dirpath), file),
+                        )
         zip_file.close()
         if backup["compression"]:
             for depend in config["depends"]:
@@ -88,8 +91,8 @@ def main_job():
             os.remove(f"./backup/{zip_name}")
 
 
-schedule.every(1).seconds.do(main_job)
 if __name__ == "__main__":
+    schedule.every(1).seconds.do(main_job)
     while True:
         schedule.run_pending()
         seconds += 1
