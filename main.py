@@ -14,7 +14,6 @@ import os
 import time
 import yaml
 import zipfile
-import schedule
 from loguru import logger
 from modules.uploads import UPLOADS
 
@@ -59,11 +58,12 @@ def schedule2seconds(schedule_str: str):
     return s_day * 24 * 60 * 60 + s_hour * 60 * 60 + s_minute * 60 + s_second
 
 
-def main_job():
-    global seconds
+def main_job(seconds):
     for backup in config["backup_dirs"]:
-        if seconds % schedule2seconds(backup["schedule"]) != 0:
+        if seconds % schedule2seconds(backup["schedule"]) != 0 and seconds >= 0:
+            print(f"skip {seconds}")
             continue
+        logger.info(f"start to backup {backup['name']}")
         zip_name = f"{backup['name']}_{int(time.time()*1000)}.zip"
         zip_file = zipfile.ZipFile(f"./backup/{zip_name}", "w", zipfile.ZIP_DEFLATED)
         backup_dir = backup["dir"]
@@ -75,13 +75,24 @@ def main_job():
             exclude_files = backup["exclude_files"]
         except:
             exclude_files = []
+        if exclude_folders == None:
+            exclude_folders = []
+        if exclude_files == None:
+            exclude_files = []
         for dirpath, dirnames, filenames in os.walk(backup_dir):
+            compress_dir = (
+                backup_dir[: backup_dir.length - 1]
+                if backup_dir[-1] == "/"
+                else backup_dir
+            )
             if os.path.basename(dirpath) not in exclude_folders:
                 for file in filenames:
                     if file not in exclude_files:
                         zip_file.write(
                             os.path.join(dirpath, file),
-                            arcname=os.path.join(os.path.basename(dirpath), file),
+                            arcname=os.path.join(
+                                dirpath.replace(compress_dir, ""), file
+                            ),
                         )
         zip_file.close()
         if backup["compression"]:
@@ -92,8 +103,7 @@ def main_job():
 
 
 if __name__ == "__main__":
-    schedule.every(1).seconds.do(main_job)
     while True:
-        schedule.run_pending()
+        main_job(seconds=seconds)
         seconds += 1
         time.sleep(1)
