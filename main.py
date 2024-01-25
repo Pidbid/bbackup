@@ -61,7 +61,6 @@ def schedule2seconds(schedule_str: str):
 def main_job(seconds):
     for backup in config["backup_dirs"]:
         if seconds % schedule2seconds(backup["schedule"]) != 0 and seconds >= 0:
-            print(f"skip {seconds}")
             continue
         logger.info(f"start to backup {backup['name']}")
         zip_name = f"{backup['name']}_{int(time.time()*1000)}.zip"

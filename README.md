@@ -25,13 +25,22 @@ A file/folder compression backup cohabit.
   - bucket # alioss bucket  
   - oss_access_key_id # aliyun your own access_key  
   - oss_access_key_secret # aliyun your own access_secret  
+- qiniu_oss  
+  - bucket # qiniu bucket name  
+  - access_key  
+  - secret_key  
+- http_post:  
+  - url # http post method url  
+  - body # http body  
+  - header # http header config
 
 ## Features
 - [x] backup folder  
 - [ ] backup files  
 - [x] alioss support  
 - [ ] tencent cloud oss support  
-- [ ] http post support  
+- [x] http post support  
+- [x] qiniu oss support  
 
 ## About  
 [Wicos](https://www.wicos.me)

@@ -15,6 +15,7 @@ import yaml
 import requests
 import oss2
 from oss2.credentials import EnvironmentVariableCredentialsProvider
+from qiniu import Auth, put_file, etag
 
 
 class UPLOADS:
@@ -49,5 +50,24 @@ class UPLOADS:
         url = bucket.sign_url("GET", object_name, 3600, slash_safe=True)
         return url
 
-    def txyun(self, path: str):
+    def http_post(self, url: str, path: str):
+        res = requests.post(
+            url=self.config["http_post"]["url"],
+            files={"file": open(path)},
+            headers=self.config["https_post"]["header"],
+            json=self.config["https_post"]["body"],
+        )
+        return res.text
+
+    def tencent_oss(self, path: str):
         pass
+
+    def qiniu_oss(self, path: str, target: str = None):
+        q = Auth(
+            self.config["qiniu_oss"]["access_key"],
+            self.config["qiniu_oss"]["secret_key"],
+        )
+        key = f"{target}/{path.split('/')[-1]}"
+        token = q.upload_token(self.config["qiniu_oss"]["bucket"], key, 3600)
+        ret, info = put_file(token, key, path, version="v2")
+        return {"ret": ret, "info": info}

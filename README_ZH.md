@@ -25,13 +25,22 @@
   - bucket # 阿里云oss的 bucket  
   - oss_access_key_id # 阿里云的 access_key  
   - oss_access_key_secret # 阿里云的 access_secret  
+- qiniu_oss  
+  - bucket # 七牛 bucket 的名称  
+  - access_key  
+  - secret_key  
+- http_post:  
+  - url # http post 的 url  
+  - body # http body  
+  - header # http header config
 
 ## 特性  
 - [x] 文件夹备份  
 - [ ] 文件备份  
 - [x] 支持阿里云oss  
 - [ ] 支持腾讯云oss  
-- [ ] 支持http 的 post方法进行备份  
+- [x] 支持http 的 post方法进行备份  
+- [x] 支持七牛oss
 
 ## 关于    
 [Wicos](https://www.wicos.me)

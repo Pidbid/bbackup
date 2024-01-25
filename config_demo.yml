@@ -23,6 +23,12 @@ ali_oss:
 tencent_oss:
   endpoint: 
 
+qiniu_oss:
+  bucket: 
+  access_key: 
+  secret_key: 
+
 http_post:
   url: 
   body: 
+  header: 
